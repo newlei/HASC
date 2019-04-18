@@ -37,3 +37,17 @@ cd HASC
   > Owner Admiration  <item, owner user> matrix, e.g:<7,1> show that items(id:7) is uploaded by user(id:1) 
   >
   > Item Visual Information <item, image visual feature> matrix, e.g:<2,[\*]\*4096> is the image feature of item(id:2) 
+
+- For the data in this paper, please seed mail to me：
+  >  Please indicate the required dataset and transmission method in the email.
+
+### Train/test
+
+- Train a model:
+
+```python
+#!./HASC
+python HASC_model.py
+```
+
+
