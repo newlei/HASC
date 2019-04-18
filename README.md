@@ -50,4 +50,25 @@ cd HASC
 python HASC_model.py
 ```
 
+## Citation 
+If you use this code for your research, please cite our papers.
+
+```
+@article{HASC2019,
+  title={A Hierarchical Attention Model for Social Contextual Image Recommendation},
+  author={Le, Wu and Lei, Chen and Richang, Hong and Yanjie, Fu and Xing, Xie and Meng, Wang}
+  journal={IEEE Transactions on Knowledge and Data Engineering},
+  year={2019}
+}
+
+
+@inproceedings{ChuaTHLLZ09,
+  title={NUS-WIDE: a real-world web image database from National University of Singapores},
+  author    = {Tat{-}Seng Chua and  Jinhui Tang and  Richang Hong and Haojie Li and Zhiping Luo and  Yantao Zheng},
+  booktitle={Proceedings of the ACM international conference on image and video retrieval, {CIVR} 2009},
+  year={2009}
+}
+```
+
+
 
