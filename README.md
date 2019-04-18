@@ -28,13 +28,12 @@ cd HASC
 
 - Need :
 
-  > <user, rating,item> matrix, 
+  > Favor <user,item> matrix,  e.g.:<1,2> is that user(id:1) favors item(id:2) 
   >
-  > Upload History  <user, upload history item> matrix
+  > Upload History  <user, upload history item> matrix, e.g.:<1,[7,11,23]> show that user(id:1) uploads some items(id:7,11 and 23)  
   >
-  >  Social Neighborhood  <user, follow user> matrix    
+  >  Social Neighborhood  <user, follow user> matrix, e.g.:<1,[5,6]> show that user(id:1) follows some users(id:5,6)   
   >
-  > Owner Admiration  <item, owner user> matrix
+  > Owner Admiration  <item, owner user> matrix, e.g:<7,1> show that items(id:7) is uploaded by user(id:1) 
   >
-  > Item Visual Information <item, image visual feature> matrix
-  
+  > Item Visual Information <item, image visual feature> matrix, e.g:<2,[\*]\*4096> is the image feature of item(id:2) 
