@@ -29,7 +29,7 @@ cd HASC
 
 - Need :
 
-  > Favor <user,item> matrix,  e.g.:<1,2> is that user(id:1) favors item(id:2) 
+  > Favor <user,item> matrix,  e.g.:<1,2> denotes that user(id:1) favors item(id:2) 
   >
   > Upload History  <user, upload history item> matrix, e.g.:<1,[7,11,23]> show that user(id:1) uploads some items(id:7,11 and 23)  
   >
@@ -52,7 +52,8 @@ python HASC_model.py
 ```
 
 ## Citation 
-If you find this useful for your research, please cite our papers.
+If you find this useful for your research, please kindly cite the following two papers
+that crawal and analyze the data.
 
 ```
 @article{HASC2019,
@@ -70,6 +71,44 @@ If you find this useful for your research, please cite our papers.
   year={2009}
 }
 ```
+
+Besides, you may find these following works are useful for understanding social recommendation.
+```
+@article{evolveSNS2017,
+  title={Modeling the evolution of users’ preferences and social links in social networking services},
+  author={Wu, Le and Ge, Yong and Liu, Qi and Chen, Enhong and Hong, Richang and Du, Junping and Wang, Meng},
+  journal={IEEE Transactions on Knowledge and Data Engineering},
+  volume={29},
+  number={6},
+  pages={1240--1253},
+  year={2017},
+  publisher={IEEE}
+}
+
+
+@inproceedings{arse2018,
+  title={Attentive recurrent social recommendation},
+  author={Sun, Peijie and Wu, Le and Wang, Meng},
+  booktitle={The 41st International ACM SIGIR Conference on Research \& Development in Information Retrieval},
+  pages={185--194},
+  year={2018},
+  organization={ACM}
+}
+
+
+
+@inproceedings{DiffNet2019,
+  title={A Neural Influence Diffusion Model for Social Recommendation},
+  author={Wu, Le and Sun, Peijie and  Fu, Yanjie and Hong, Richang and Wang, Xiting and Wang, Meng},
+  booktitle={The 42st International ACM SIGIR Conference on Research \& Development in Information Retrieval},
+  year={2019},
+  organization={ACM}
+}
+```
+
+
+
+
 ## Acknowledgments
 
 We thank LMC lab. for providing GPU and dataset for us.
