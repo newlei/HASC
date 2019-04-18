@@ -51,7 +51,7 @@ python HASC_model.py
 ```
 
 ## Citation 
-If you use this code for your research, please cite our papers.
+If you find this useful for your research, please cite our papers.
 
 ```
 @article{HASC2019,
@@ -62,13 +62,14 @@ If you use this code for your research, please cite our papers.
 }
 
 
-@inproceedings{ChuaTHLLZ09,
+@inproceedings{NUSWIDE09,
   title={NUS-WIDE: a real-world web image database from National University of Singapores},
-  author    = {Tat{-}Seng Chua and  Jinhui Tang and  Richang Hong and Haojie Li and Zhiping Luo and  Yantao Zheng},
+  author = {Tat{-}Seng Chua and  Jinhui Tang and  Richang Hong and Haojie Li and Zhiping Luo and  Yantao Zheng},
   booktitle={Proceedings of the ACM international conference on image and video retrieval, {CIVR} 2009},
   year={2009}
 }
 ```
+## Acknowledgments
 
-
+We thank LMC lab. for providing GPU and dataset for us.
 
