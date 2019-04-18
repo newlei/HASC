@@ -25,19 +25,13 @@ user_ratings=np.load('./data/mymodel_train.npy').item()
 
 user_ups=np.load('./data/user_ups.npy')
 ups_user=np.load('./data/ups_user.npy') 
-user_fellows=np.load('./data/user_fellow.npy')  
-img_feature1=np.load('./data/feature_3w.npy')
-img_feature=img_feature1/15.0 
+user_follows=np.load('./data/user_follow.npy')  
+img_feature=np.load('./data/image_feature.npy').item()
+#img_feature=img_feature1/15.0 
 
-vision_repre1=np.load('./data/vision_representation.npy')
+vision_repre=np.load('./data/user_feature_contnt_style.npy').item()
 
-vision_repre=vision_repre1/15.0 
-
-user_social_embedding=np.load('./data/social_embedding_list.npy')#.item() 
-
-#tf.Variable(user_social_embedding)
-
-#exit()
+#vision_repre=vision_repre1/15.0 
 
 user_id_mapping=len(user_ratings_original)
 item_id_mapping=len(ups_user) 
@@ -46,24 +40,24 @@ item_id_mapping=len(ups_user)
 
 print 'user:',user_id_mapping,'item:',item_id_mapping
  
-u_fellow_all=[[]]*user_id_mapping 
-u_fellow_user_all=[[]]*user_id_mapping  
-u_fellow_split_all=[[]]*user_id_mapping  
+u_follow_all=[[]]*user_id_mapping 
+u_follow_user_all=[[]]*user_id_mapping  
+u_follow_split_all=[[]]*user_id_mapping  
 u_vision_f_all_b=[[]]*user_id_mapping  
 for u in range(user_id_mapping):
-    u_fellow=[] 
-    u_fellow_user=[]
+    u_follow=[] 
+    u_follow_user=[]
     u_vision_f_b=[]
     u_vision_f_a=[]
-    count_fellow=0 
-    for fellow_i in user_fellows[u]:  
-        u_fellow.append(fellow_i)  
-        u_fellow_user.append(u)
-        u_vision_f_b.append(vision_repre[fellow_i]) 
-        count_fellow=count_fellow+1  
-    u_fellow_all[u]=(u_fellow) 
-    u_fellow_user_all[u]=u_fellow_user
-    u_fellow_split_all[u]=(count_fellow) 
+    count_follow=0 
+    for follow_i in user_follows[u]:  
+        u_follow.append(follow_i)  
+        u_follow_user.append(u)
+        u_vision_f_b.append(vision_repre[follow_i]) 
+        count_follow=count_follow+1  
+    u_follow_all[u]=(u_follow) 
+    u_follow_user_all[u]=u_follow_user
+    u_follow_split_all[u]=(count_follow) 
     u_vision_f_all_b[u]=u_vision_f_b 
 
  
@@ -96,9 +90,9 @@ def beatch_train_generator(train_ratings,train_ratings_original,user_count,item_
     u_up_user_512=[[]]*batch_size
     u_up_split_512=[[]]*batch_size
     u_up_feature_512=[[]]*batch_size
-    u_fellow_512=[[]]*batch_size
-    u_fellow_user_512=[[]]*batch_size
-    u_fellow_split_512=[[]]*batch_size 
+    u_follow_512=[[]]*batch_size
+    u_follow_user_512=[[]]*batch_size
+    u_follow_split_512=[[]]*batch_size 
 
     vision_repre_512_a=[[]]*batch_size 
     vision_repre_512_b=[[]]*batch_size 
@@ -128,15 +122,15 @@ def beatch_train_generator(train_ratings,train_ratings_original,user_count,item_
        # for i in range(u_up_split_all[u]):
            # gather_upload.append(count) 
 
-        u_fellow_512[count]=u_fellow_all[u]#(u_fellow)
-        u_fellow_user_512[count]=u_fellow_user_all[u]#(u_fellow_user)
-        u_fellow_split_512[count]=u_fellow_split_all[u]#(count_fellow) 
-        #for i in range(u_fellow_split_all[u]):
+        u_follow_512[count]=u_follow_all[u]#(u_follow)
+        u_follow_user_512[count]=u_follow_user_all[u]#(u_follow_user)
+        u_follow_split_512[count]=u_follow_split_all[u]#(count_follow) 
+        #for i in range(u_follow_split_all[u]):
             #gather_social.append(count) 
-        gather_social=np.concatenate((gather_social,np.zeros(u_fellow_split_all[u])+count))
+        gather_social=np.concatenate((gather_social,np.zeros(u_follow_split_all[u])+count))
         count=count+1 
          
-    one_part=([numpy.asarray(t_512),numpy.asarray(gather_upload),numpy.asarray(gather_social),numpy.asarray(vision_repre_512_a),numpy.asarray(vision_repre_512_b),numpy.asarray(u_up_512), numpy.asarray(u_up_user_512),numpy.asarray(u_up_split_512),numpy.asarray(u_up_feature_512),numpy.asarray(u_fellow_512),numpy.asarray(u_fellow_user_512),numpy.asarray(u_fellow_split_512)])
+    one_part=([numpy.asarray(t_512),numpy.asarray(gather_upload),numpy.asarray(gather_social),numpy.asarray(vision_repre_512_a),numpy.asarray(vision_repre_512_b),numpy.asarray(u_up_512), numpy.asarray(u_up_user_512),numpy.asarray(u_up_split_512),numpy.asarray(u_up_feature_512),numpy.asarray(u_follow_512),numpy.asarray(u_follow_user_512),numpy.asarray(u_follow_split_512)])
     #start2=time.time()
     #print  'one_part:',start2-start1
     return one_part
@@ -254,27 +248,21 @@ def Upload_influence_speed(batch_size,u_ups,u_ups_user,user_emb_p,user_emb_q,ite
     alpha_all=tf.where(tf.is_nan(alpha_all),tf.ones_like(alpha_all)*0.001,alpha_all)  
     return alpha_all
  
-def Social_influence_one_cal(batch_size,u_fellows,u_fellows_user,user_emb_p,user_emb_q,vision_beta_a,vision_beta_b,e_ab_w,e_ab_b,gather_social):
+def Social_influence_one_cal(batch_size,u_follows,u_follows_user,user_emb_p,user_emb_q,vision_beta_a,vision_beta_b,e_ab_w,e_ab_b,gather_social):
     #social influence
-    user_social_emb=tf.Variable(user_social_embedding,dtype=tf.float32) 
    
-    fellow_pa=(tf.nn.embedding_lookup(user_emb_p, u_fellows))
-    fellow_qa=(tf.nn.embedding_lookup(user_emb_q, u_fellows))  
-    fellow_pb=(tf.nn.embedding_lookup(user_emb_p, u_fellows_user))
-    fellow_qb=(tf.nn.embedding_lookup(user_emb_q, u_fellows_user))  
-
-
-    fellow_emb_f=(tf.nn.embedding_lookup(user_social_emb, u_fellows)) 
-    fellow_emb_u=(tf.nn.embedding_lookup(user_social_emb, u_fellows_user)) 
-
-    x_fellow=tf.concat([fellow_pa,fellow_pb,fellow_qa,fellow_qb,fellow_emb_f,fellow_emb_u,vision_beta_a,vision_beta_b],1)   #size_up*60   
-    e_ab_temp=tf.nn.elu(tf.matmul(x_fellow,e_ab_w)+e_ab_b)#(size_up*60 * 60*20)+20=size_up*20
+    follow_pa=(tf.nn.embedding_lookup(user_emb_p, u_follows))
+    follow_qa=(tf.nn.embedding_lookup(user_emb_q, u_follows))  
+    follow_pb=(tf.nn.embedding_lookup(user_emb_p, u_follows_user))
+    follow_qb=(tf.nn.embedding_lookup(user_emb_q, u_follows_user))  
+    x_follow=tf.concat([follow_pa,follow_pb,follow_qa,follow_qb,vision_beta_a,vision_beta_b],1)   #size_up*60   
+    e_ab_temp=tf.nn.elu(tf.matmul(x_follow,e_ab_w)+e_ab_b)#(size_up*60 * 60*20)+20=size_up*20
 
     e_ab_temp_sum=(tf.reduce_sum(e_ab_temp,1, keep_dims=True))
     e_ab_temp_sum=tf.where(e_ab_temp_sum>88,tf.ones_like(e_ab_temp_sum)*88,e_ab_temp_sum)  
 
     e_ab=e_ab_temp_sum#tf.exp(e_ab_temp_sum)+0.001#tf.exp((tf.reduce_sum(e_ab_temp,1, keep_dims=True)))#size_up*1 
-    molecular_e_ab=tf.multiply(e_ab,fellow_qb)#size_up*15
+    molecular_e_ab=tf.multiply(e_ab,follow_qb)#size_up*15
     denominator_e_ab=e_ab#size_up*1   
    
     part_mole=tf.segment_sum(molecular_e_ab,gather_social)
@@ -315,7 +303,7 @@ with tf.Graph().as_default(), tf.Session() as session:
    
     
     batch_size = 512
-    #u, i,i_uploader,I_li_a,j,j_uploader,I_lj_a,u_ups,u_ups_user,u_ups_split,u_fellows,u_fellows_user,u_fellows_split,loss, auc,my_get, train_op,train_ = vbpr(user_count, item_count,batch_size) 
+    #u, i,i_uploader,I_li_a,j,j_uploader,I_lj_a,u_ups,u_ups_user,u_ups_split,u_follows,u_follows_user,u_follows_split,loss, auc,my_get, train_op,train_ = vbpr(user_count, item_count,batch_size) 
     #user_count, item_count
     hidden_dim=15 
     hidden_img_dim=15
@@ -327,8 +315,8 @@ with tf.Graph().as_default(), tf.Session() as session:
     bias_regulization=1.0
 
     u = tf.placeholder(tf.int32, [None])
-    vision_repre_u_a=tf.placeholder(tf.float32, [None,4096])
-    vision_repre_u_b=tf.placeholder(tf.float32, [None,4096]) 
+    vision_repre_u_a=tf.placeholder(tf.float32, [None,1808])
+    vision_repre_u_b=tf.placeholder(tf.float32, [None,1808]) 
     gather_upload=tf.placeholder(tf.int32, [None])
     gather_social=tf.placeholder(tf.int32, [None])
 
@@ -340,11 +328,11 @@ with tf.Graph().as_default(), tf.Session() as session:
     u_ups = tf.placeholder(tf.int32,[None]) 
     u_ups_user = tf.placeholder(tf.int32,[None]) 
     u_ups_split = tf.placeholder(tf.int32,[None]) 
-    u_ups_feature=tf.placeholder(tf.float32, [None,4096]) 
+    u_ups_feature=tf.placeholder(tf.float32, [None,1808]) 
 
-    u_fellows = tf.placeholder(tf.int32,[None]) 
-    u_fellows_user = tf.placeholder(tf.int32,[None]) 
-    u_fellows_split = tf.placeholder(tf.int32,[None])   
+    u_follows = tf.placeholder(tf.int32,[None]) 
+    u_follows_user = tf.placeholder(tf.int32,[None]) 
+    u_follows_split = tf.placeholder(tf.int32,[None])   
     train_ =tf.placeholder(tf.int32,[None])  
 
     user_emb_p= tf.get_variable("user_emb_p", [user_count+1, hidden_dim],
@@ -363,15 +351,15 @@ with tf.Graph().as_default(), tf.Session() as session:
     e_aj_b=tf.get_variable("e_aj_b", [hidden_dim_upload], 
                             initializer=tf.constant_initializer(0.0))
     #upload influence vision part
-    e_aj_vision_w=tf.get_variable("e_aj_vision_w", [4096, hidden_dim], 
+    e_aj_vision_w=tf.get_variable("e_aj_vision_w", [1808, hidden_dim], 
                             initializer=tf.random_normal_initializer(0, 0.01)) 
 
     #soclai influence feedforward neural net
-    e_ab_w=tf.get_variable("e_ab_w", [hidden_dim*6+128*2, hidden_dim_social], 
+    e_ab_w=tf.get_variable("e_ab_w", [hidden_dim*6, hidden_dim_social], 
                             initializer=tf.random_normal_initializer(0, 0.01))
     e_ab_b=tf.get_variable("e_ab_b", [hidden_dim_social], 
                             initializer=tf.constant_initializer(0.0))
-    e_ab_vision_w=tf.get_variable("e_ab_vision_w", [4096, hidden_dim], 
+    e_ab_vision_w=tf.get_variable("e_ab_vision_w", [1808, hidden_dim], 
                             initializer=tf.random_normal_initializer(0, 0.01))  
  
     #factor importance feedforward neural net
@@ -379,7 +367,7 @@ with tf.Graph().as_default(), tf.Session() as session:
                             initializer=tf.random_normal_initializer(0, 0.01))
     h_f_b=tf.get_variable("h_f_b", [hidden_dim_factor], 
                             initializer=tf.constant_initializer(0.0))  
-    h_f_vision_w=tf.get_variable("h_f_vision_w", [4096, hidden_dim], 
+    h_f_vision_w=tf.get_variable("h_f_vision_w", [1808, hidden_dim], 
                             initializer=tf.random_normal_initializer(0, 0.01))  
  
     user_emb_p_1=user_emb_p
@@ -397,8 +385,8 @@ with tf.Graph().as_default(), tf.Session() as session:
     vision_beta_a=tf.gather(tf.matmul(vision_repre_u_a,e_ab_vision_w),gather_social)
     vision_beta_b=(tf.matmul(vision_repre_u_b,e_ab_vision_w))
 
-    # beta=Social_influence_one_cal(batch_size,u_fellows,u_fellows_user,u_fellows_split,user_emb_p_1,user_emb_q_1,vision_beta_a,vision_beta_b,e_ab_w,e_ab_b) 
-    beta=Social_influence_one_cal(batch_size,u_fellows,u_fellows_user,user_emb_p_1,user_emb_q_1,vision_beta_a,vision_beta_b,e_ab_w,e_ab_b,gather_social) 
+    # beta=Social_influence_one_cal(batch_size,u_follows,u_follows_user,u_follows_split,user_emb_p_1,user_emb_q_1,vision_beta_a,vision_beta_b,e_ab_w,e_ab_b) 
+    beta=Social_influence_one_cal(batch_size,u_follows,u_follows_user,user_emb_p_1,user_emb_q_1,vision_beta_a,vision_beta_b,e_ab_w,e_ab_b,gather_social) 
     
     #uploader Influence
     uploader_influence_i=tf.nn.embedding_lookup(user_emb_q_1, i_uploader)
@@ -472,7 +460,7 @@ with tf.Graph().as_default(), tf.Session() as session:
     saver.restore(session, '../bpr_model/mymodel199.ckpt') 
 
     for epoch in range(1, 130):
-        Path_vbpr_train='./results_my_elu_exp_0.0001r/mymodel_train_result_all_vision_exp.txt'
+        Path_vbpr_train='./results_my_elu_exp_0.0001r/mymodel_train_result_all.txt'
         wfile_vbpr_train=open(Path_vbpr_train,'a')  
         if epoch==1:
             wfile_vbpr_train.write('\n+mymodel +199bpr model+ 0.1*x')
@@ -492,7 +480,7 @@ with tf.Graph().as_default(), tf.Session() as session:
         print time_start2-time_start1
         flag=1
         #train_batch_generator(result_all_train,result_train_count, sample_count, batch_size) 
-        for  d,gather_upload_,gather_social_,vision_repre_a_,vision_repre_b_,up_,up_user,up_split,up_feature,fellow_,fellow_user,fellow_split in train_batch:
+        for  d,gather_upload_,gather_social_,vision_repre_a_,vision_repre_b_,up_,up_user,up_split,up_feature,follow_,follow_user,follow_split in train_batch:
             #pdb.set_trace()
            # print len(gather_upload_),len(gather_social_)
             #time_start3=time.time()
@@ -517,23 +505,23 @@ with tf.Graph().as_default(), tf.Session() as session:
                 for j_up_u in i_up_u:
                     up_user_end.append(j_up_u)
 
-            fellow_user_end=[]
-            for i_fellow_u in fellow_user:
-                for j_fellow_u in i_fellow_u:
-                    fellow_user_end.append(j_fellow_u) 
+            follow_user_end=[]
+            for i_follow_u in follow_user:
+                for j_follow_u in i_follow_u:
+                    follow_user_end.append(j_follow_u) 
 
-            fellow_end=[]
-            for i_fellow in fellow_:
-                for j_fellow in i_fellow:
-                    fellow_end.append(j_fellow) 
+            follow_end=[]
+            for i_follow in follow_:
+                for j_follow in i_follow:
+                    follow_end.append(j_follow) 
 
             if flag==1:
                time_start4=time.time()  
             _loss, _ ,auc_,get_= session.run([loss, train_op,auc,my_get], feed_dict={
                     u:d[:,0],gather_upload:gather_upload_,gather_social:gather_social_, vision_repre_u_a:vision_repre_a_, vision_repre_u_b:vision_repre_b_end,\
                     i:d[:,1],i_uploader:d[:,2],j:d[:,3], j_uploader:d[:,4],\
-                    u_ups:up_end,u_ups_user:up_user_end,u_ups_split:up_split,u_ups_feature:up_feature_end,u_fellows:fellow_end,\
-                    u_fellows_user:fellow_user_end,u_fellows_split:fellow_split,train_:[1,2,3]
+                    u_ups:up_end,u_ups_user:up_user_end,u_ups_split:up_split,u_ups_feature:up_feature_end,u_follows:follow_end,\
+                    u_follows_user:follow_user_end,u_follows_split:follow_split,train_:[1,2,3]
                 }) 
             count=count+1
             _loss_train += _loss
@@ -579,7 +567,7 @@ with tf.Graph().as_default(), tf.Session() as session:
 
 
         #pdb.set_trace()
-        for d,gather_upload_,gather_social_,vision_repre_a_,vision_repre_b_,up_,up_user,up_split,up_feature,fellow_,fellow_user,fellow_split in all_result_val:# train_batch_generator_all(result_all_val,result_all_val_u,result_val_count, batch_size):
+        for d,gather_upload_,gather_social_,vision_repre_a_,vision_repre_b_,up_,up_user,up_split,up_feature,follow_,follow_user,follow_split in all_result_val:# train_batch_generator_all(result_all_val,result_all_val_u,result_val_count, batch_size):
         # train_batch_generator(result_all_val,result_val_count, sample_count, batch_size):
             #break
             vision_repre_b_end=[] 
@@ -602,22 +590,22 @@ with tf.Graph().as_default(), tf.Session() as session:
                 for j_up_u in i_up_u:
                     up_user_end.append(j_up_u)
 
-            fellow_user_end=[]
-            for i_fellow_u in fellow_user:
-                for j_fellow_u in i_fellow_u:
-                    fellow_user_end.append(j_fellow_u) 
+            follow_user_end=[]
+            for i_follow_u in follow_user:
+                for j_follow_u in i_follow_u:
+                    follow_user_end.append(j_follow_u) 
 
-            fellow_end=[]
-            for i_fellow in fellow_:
-                for j_fellow in i_fellow:
-                    fellow_end.append(j_fellow) 
+            follow_end=[]
+            for i_follow in follow_:
+                for j_follow in i_follow:
+                    follow_end.append(j_follow) 
             #time_start4=time.time()
             
             _loss,val_auc= session.run([loss,auc], feed_dict={
                     u:d[:,0],gather_upload:gather_upload_,gather_social:gather_social_, vision_repre_u_a:vision_repre_a_, vision_repre_u_b:vision_repre_b_end,\
                     i:d[:,1],i_uploader:d[:,2],j:d[:,3], j_uploader:d[:,4],\
-                    u_ups:up_end,u_ups_user:up_user_end,u_ups_split:up_split,u_ups_feature:up_feature_end,u_fellows:fellow_end,\
-                    u_fellows_user:fellow_user_end,u_fellows_split:fellow_split,train_:[0,0,0]
+                    u_ups:up_end,u_ups_user:up_user_end,u_ups_split:up_split,u_ups_feature:up_feature_end,u_follows:follow_end,\
+                    u_follows_user:follow_user_end,u_follows_split:follow_split,train_:[0,0,0]
                 })  
             _loss_val += _loss 
             #print _loss
@@ -632,7 +620,7 @@ with tf.Graph().as_default(), tf.Session() as session:
 
         all_result_test=one_test_val_generator(test_ratings,user_ratings_original,user_id_mapping,item_id_mapping,batch_size)
         sample_count =len(all_result_test)   
-        for  d,gather_upload_,gather_social_,vision_repre_a_,vision_repre_b_,up_,up_user,up_split,up_feature,fellow_,fellow_user,fellow_split in all_result_test:#train_batch_generator_all(result_all_test,result_all_test_u,result_test_count, batch_size):
+        for  d,gather_upload_,gather_social_,vision_repre_a_,vision_repre_b_,up_,up_user,up_split,up_feature,follow_,follow_user,follow_split in all_result_test:#train_batch_generator_all(result_all_test,result_all_test_u,result_test_count, batch_size):
         #train_batch_generator(result_all_test,result_test_count, sample_count, batch_size):
            
             vision_repre_b_end=[] 
@@ -655,21 +643,21 @@ with tf.Graph().as_default(), tf.Session() as session:
                 for j_up_u in i_up_u:
                     up_user_end.append(j_up_u)
 
-            fellow_user_end=[]
-            for i_fellow_u in fellow_user:
-                for j_fellow_u in i_fellow_u:
-                    fellow_user_end.append(j_fellow_u) 
+            follow_user_end=[]
+            for i_follow_u in follow_user:
+                for j_follow_u in i_follow_u:
+                    follow_user_end.append(j_follow_u) 
 
-            fellow_end=[]
-            for i_fellow in fellow_:
-                for j_fellow in i_fellow:
-                    fellow_end.append(j_fellow)  
+            follow_end=[]
+            for i_follow in follow_:
+                for j_follow in i_follow:
+                    follow_end.append(j_follow)  
             #time_start4=time.time()
             test_loss,test_auc= session.run([loss,auc], feed_dict={
                     u:d[:,0],gather_upload:gather_upload_,gather_social:gather_social_, vision_repre_u_a:vision_repre_a_, vision_repre_u_b:vision_repre_b_end,\
                     i:d[:,1],i_uploader:d[:,2],j:d[:,3], j_uploader:d[:,4],\
-                    u_ups:up_end,u_ups_user:up_user_end,u_ups_split:up_split,u_ups_feature:up_feature_end,u_fellows:fellow_end,\
-                    u_fellows_user:fellow_user_end,u_fellows_split:fellow_split,train_:[0,0,0]
+                    u_ups:up_end,u_ups_user:up_user_end,u_ups_split:up_split,u_ups_feature:up_feature_end,u_follows:follow_end,\
+                    u_follows_user:follow_user_end,u_follows_split:follow_split,train_:[0,0,0]
                 }) 
             auc_get=test_auc
             _loss_test += test_loss 
@@ -715,7 +703,7 @@ with tf.Graph().as_default(), tf.Session() as session:
             user_sel_list=[]
             user_sel_feature_a=[]
             user_sel_feature_b=[]
-            for i_usersel in range(0,len(user_fellows[user_sel])):
+            for i_usersel in range(0,len(user_follows[user_sel])):
                 user_sel_list.append(user_sel)
                 user_sel_feature_a.append(vision_repre[user_sel])
                 user_sel_feature_b.append(vision_repre[i_usersel])
@@ -723,12 +711,11 @@ with tf.Graph().as_default(), tf.Session() as session:
             vision_user_social_a=np.matmul(user_sel_feature_a,e_ab_vision_w_1)
             vision_user_social_b=np.matmul(user_sel_feature_b,e_ab_vision_w_1)
             #u_vision_f_all
-            x_fellow2=np.concatenate([np.take(user_emb_p_1,user_sel_list,0),np.take(user_emb_p_1,user_fellows[user_sel],0),\
-                np.take(user_emb_q_1,user_sel_list,0),np.take(user_emb_q_1,user_fellows[user_sel],0),np.take(user_social_embedding,user_sel_list,0),np.take(user_social_embedding,user_fellows[user_sel],0),vision_user_social_a,vision_user_social_b],1)
-            #pdb.set_trace()
-            e_ab_temp2=(numpy.dot(x_fellow2,e_ab_w_1)+e_ab_b_1) 
+            x_follow2=np.concatenate([np.take(user_emb_p_1,user_sel_list,0),np.take(user_emb_p_1,user_follows[user_sel],0),\
+                np.take(user_emb_q_1,user_sel_list,0),np.take(user_emb_q_1,user_follows[user_sel],0),vision_user_social_a,vision_user_social_b],1)
+            e_ab_temp2=(numpy.dot(x_follow2,e_ab_w_1)+e_ab_b_1) 
             e_ab2=np.exp(np.sum(e_ab_temp2,1))+0.001   
-            beta= np.matmul((e_ab2).T,(np.take(user_emb_q_1,user_fellows[user_sel],0)))/np.sum(e_ab2)  
+            beta= np.matmul((e_ab2).T,(np.take(user_emb_q_1,user_follows[user_sel],0)))/np.sum(e_ab2)  
              
 
             u_emb_base=user_emb_p_1[user_sel]
@@ -805,7 +792,7 @@ with tf.Graph().as_default(), tf.Session() as session:
             user_sel_list=[]
             user_sel_feature_a=[]
             user_sel_feature_b=[]
-            for i_usersel in range(0,len(user_fellows[user_sel])):
+            for i_usersel in range(0,len(user_follows[user_sel])):
                 user_sel_list.append(user_sel)
                 user_sel_feature_a.append(vision_repre[user_sel])
                 user_sel_feature_b.append(vision_repre[i_usersel])
@@ -813,11 +800,11 @@ with tf.Graph().as_default(), tf.Session() as session:
             vision_user_social_a=np.matmul(user_sel_feature_a,e_ab_vision_w_1)
             vision_user_social_b=np.matmul(user_sel_feature_b,e_ab_vision_w_1)
             #u_vision_f_all
-            x_fellow2=np.concatenate([np.take(user_emb_p_1,user_sel_list,0),np.take(user_emb_p_1,user_fellows[user_sel],0),\
-                np.take(user_emb_q_1,user_sel_list,0),np.take(user_emb_q_1,user_fellows[user_sel],0),np.take(user_social_embedding,user_sel_list,0),np.take(user_social_embedding,user_fellows[user_sel],0),vision_user_social_a,vision_user_social_b],1)
-            e_ab_temp2=(numpy.dot(x_fellow2,e_ab_w_1)+e_ab_b_1) 
+            x_follow2=np.concatenate([np.take(user_emb_p_1,user_sel_list,0),np.take(user_emb_p_1,user_follows[user_sel],0),\
+                np.take(user_emb_q_1,user_sel_list,0),np.take(user_emb_q_1,user_follows[user_sel],0),vision_user_social_a,vision_user_social_b],1)
+            e_ab_temp2=(numpy.dot(x_follow2,e_ab_w_1)+e_ab_b_1) 
             e_ab2=np.exp(np.sum(e_ab_temp2,1))+0.001   
-            beta= np.matmul((e_ab2).T,(np.take(user_emb_q_1,user_fellows[user_sel],0)))/np.sum(e_ab2)  
+            beta= np.matmul((e_ab2).T,(np.take(user_emb_q_1,user_follows[user_sel],0)))/np.sum(e_ab2)  
              
 
             u_emb_base=user_emb_p_1[user_sel]
