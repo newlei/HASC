@@ -38,7 +38,7 @@ cd HASC
   >
   > Item Visual Information <item, image visual feature> matrix, e.g:<2,[\*]\*4096> is the image feature of item(id:2) 
 
-- For the data in this paper, please seed mail to me：
+- For the data in this paper, please seed mail to me<chenlei.hfut@gmail.com>：
   >  Please indicate the required dataset and transmission method in the email.
 
 ### Train/test
@@ -78,7 +78,7 @@ Besides, you may find these following works are useful for understanding social 
   author={Wu, Le and Ge, Yong and Liu, Qi and Chen, Enhong and Hong, Richang and Du, Junping and Wang, Meng},
   journal={IEEE Transactions on Knowledge and Data Engineering},
   volume={29},
-  number={6},
+  number={6}, 
   pages={1240--1253},
   year={2017},
   publisher={IEEE}
