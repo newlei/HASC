@@ -38,8 +38,8 @@ cd HASC
   >
   > Item Visual Information <item, image visual feature> matrix, e.g:<2,[\*]\*4096> is the image feature of item(id:2) 
 
-- For the data in this paper, please seed mail to me <chenlei.hfut@gmail.com>：
-  >  Please indicate the required dataset and transmission method in the email.
+- For the [data](https://mailhfuteducn-my.sharepoint.com/:f:/g/personal/chenlei_2016_mail_hfut_edu_cn/Elrgtc-6i-NIveEPmx9YqesBCSUC8QgRiVn5IO-QbIaaxA?e=s298wg) in this paper.
+  >  please seed mail to me <chenlei.hfut@gmail.com>. Please indicate the required dataset and transmission method in the email.
 
 ### Train/test
 
