@@ -43,6 +43,11 @@ cd HASC
  
   > Any problem: please seed mail to me <chenlei.hfut@gmail.com>. Please indicate the required dataset and transmission method in the email.
 
+###### F_S datset in './data'
+##### F_L dataset in './data/large_data'
+
+
+
 ### Train/test
 
 - Train a model:
